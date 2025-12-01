@@ -1,6 +1,7 @@
 import json
 import os
 import time
+import sys
 from urllib import request, parse
 
 def http_get(url):
@@ -54,6 +55,10 @@ def main():
     with open('/work/reports/summary.json', 'w') as f:
         json.dump({ 'results': results }, f, ensure_ascii=False, indent=2)
     print(json.dumps({ 'results': results }, ensure_ascii=False))
+    total = len(results)
+    passed = sum(1 for r in results if r.get('passed'))
+    if passed != total:
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()

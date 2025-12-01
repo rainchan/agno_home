@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run tests
+        run: |
+          make up
+          make test
+          make report
+      - name: Gate on test results
+        run: |
+          python - <<'PY'
+          import json, sys
+          with open('tests/reports/summary.json') as f:
+              data = json.load(f)
+          results = data.get('results', [])
+          passed = sum(1 for r in results if r.get('passed'))
+          total = len(results)
+          if passed != total:
+              print(json.dumps(results, ensure_ascii=False))
+              sys.exit(1)
+          PY
+      - name: Shutdown
+        if: always()
+        run: make down
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: tests/reports/summary.json
+
+  security:
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy scan node
+        uses: aquasecurity/trivy-action@0.12.0
+        with:
+          scan-type: image
+          image-ref: node:18-alpine
+          format: json
+          output: trivy-node.json
+      - name: Trivy scan python
+        uses: aquasecurity/trivy-action@0.12.0
+        with:
+          scan-type: image
+          image-ref: python:3.11-slim
+          format: json
+          output: trivy-python.json
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-reports
+          path: |
+            trivy-node.json
+            trivy-python.json

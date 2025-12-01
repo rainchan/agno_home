@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   mock-oauth:
-    image: node:18-alpine
+    image: node:20-alpine
     working_dir: /app
     volumes:
       - ./mocks/oauth:/app
@@ -9,7 +9,7 @@ services:
     ports:
       - "8080:8080"
   mock-mcp:
-    image: node:18-alpine
+    image: node:20-alpine
     working_dir: /app
     volumes:
       - ./mocks/mcp:/app
