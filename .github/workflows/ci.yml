@@ -10,11 +10,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run tests
+      - name: Run tests with coverage
         run: |
           make up
-          make test
+          make coverage
           make report
+          make coverage-report
       - name: Gate on test results
         run: |
           python - <<'PY'
@@ -36,6 +37,13 @@ jobs:
         with:
           name: test-report
           path: tests/reports/summary.json
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            tests/reports/coverage.xml
+            tests/reports/coverage
 
   security:
     runs-on: ubuntu-latest

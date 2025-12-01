@@ -19,11 +19,14 @@ services:
   tests-runner:
     image: python:3.11-slim
     working_dir: /work
+    environment:
+      - PYTHONPATH=/work
     volumes:
       - ./runner:/work/runner
       - ./cases:/work/cases
       - ./reports:/work/reports
+      - ./pytests:/work/pytests
     depends_on:
       - mock-oauth
       - mock-mcp
-    command: python /work/runner/run.py
+    command: sh -lc "pip install --no-cache-dir pytest pytest-cov && pytest -q pytests --cov=runner --cov-report=xml:/work/reports/coverage.xml --cov-report=html:/work/reports/coverage --cov-fail-under=90"
