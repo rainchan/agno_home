@@ -1,0 +1,7 @@
+{
+  "id": "TC-AUTH-01",
+  "module": "auth",
+  "preconditions": ["oauth.authorize 可联通"],
+  "steps": [{"action": "GET", "url": "http://mock-oauth:8080/oauth/authorize?brand=midea"}],
+  "assertions": {"fields": ["auth_url"], "prefix": "https://", "latency_le": 1.0}
+}

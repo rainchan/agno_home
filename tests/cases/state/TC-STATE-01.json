@@ -1,0 +1,7 @@
+{
+  "id": "TC-STATE-01",
+  "module": "state",
+  "preconditions": ["subscribe_events 可联通"],
+  "steps": [{"action": "GET", "url": "http://mock-mcp:8081/ha/subscribe_events"}],
+  "assertions": {"subscribed": true}
+}

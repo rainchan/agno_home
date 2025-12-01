@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "id": "TC-AUTH-01",
+      "elapsed": 0.10545706748962402,
+      "passed": true,
+      "details": {
+        "auth_url": "https://mock.oauth/authorize?brand=midea&state=xyz123"
+      }
+    },
+    {
+      "id": "TC-CTRL-02",
+      "passed": true,
+      "details": {
+        "call_service": {
+          "status": "ok",
+          "trace_id": "abc123"
+        },
+        "query_state": {
+          "state": "on",
+          "attributes": {
+            "brightness_pct": 30
+          }
+        }
+      }
+    },
+    {
+      "id": "TC-STATE-01",
+      "passed": true,
+      "details": {
+        "subscribed": true
+      }
+    }
+  ]
+}

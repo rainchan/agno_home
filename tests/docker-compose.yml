@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  mock-oauth:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./mocks/oauth:/app
+    command: node mock_oauth_server.js
+    ports:
+      - "8080:8080"
+  mock-mcp:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./mocks/mcp:/app
+    command: node mock_mcp_server.js
+    ports:
+      - "8081:8081"
+  tests-runner:
+    image: python:3.11-slim
+    working_dir: /work
+    volumes:
+      - ./runner:/work/runner
+      - ./cases:/work/cases
+      - ./reports:/work/reports
+    depends_on:
+      - mock-oauth
+      - mock-mcp
+    command: python /work/runner/run.py

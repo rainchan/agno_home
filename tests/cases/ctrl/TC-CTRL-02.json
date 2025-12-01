@@ -1,0 +1,10 @@
+{
+  "id": "TC-CTRL-02",
+  "module": "ctrl",
+  "preconditions": ["ha.call_service 与 ha.query_state 可联通"],
+  "steps": [
+    {"action": "POST", "url": "http://mock-mcp:8081/ha/call_service", "payload": {"domain": "light", "service": "turn_on", "payload": {"entity_id": "light.living_main", "brightness_pct": 30}}},
+    {"action": "GET", "url": "http://mock-mcp:8081/ha/query_state?entity_id=light.living_main"}
+  ],
+  "assertions": {"status": "ok", "trace_id": true, "state": "on", "brightness_pct": 30}
+}
