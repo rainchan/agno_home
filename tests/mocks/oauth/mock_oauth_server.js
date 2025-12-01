@@ -4,6 +4,30 @@ const url = require('url')
 const server = http.createServer((req, res) => {
   const parsed = url.parse(req.url, true)
   res.setHeader('Content-Type', 'application/json')
+  if (req.method === 'POST' && parsed.pathname === '/oauth/guide/start') {
+    let body = ''
+    req.on('data', chunk => { body += chunk })
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body || '{}')
+        const brand = (data.brand || '').toLowerCase()
+        const supportedBrands = ['midea']
+        if (!brand) {
+          res.statusCode = 400
+          res.end(JSON.stringify({ error: 'bad_request' }))
+          return
+        }
+        const supported = supportedBrands.includes(brand)
+        const state = Math.random().toString(36).slice(2, 10)
+        const authUrl = `https://mock.oauth/authorize?brand=${brand}&state=${state}`
+        res.end(JSON.stringify({ auth_url: authUrl, state, supported }))
+      } catch (e) {
+        res.statusCode = 400
+        res.end(JSON.stringify({ error: 'bad_request' }))
+      }
+    })
+    return
+  }
   if (req.method === 'GET' && parsed.pathname === '/oauth/authorize') {
     const brand = parsed.query.brand || 'mock'
     const state = 'xyz123'

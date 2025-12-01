@@ -28,6 +28,17 @@ def eval_auth_01():
     out['details'] = data
     return out
 
+def eval_auth_01_v2():
+    out = { 'id': 'TC-AUTH-01-V2' }
+    payload = { 'brand': 'midea' }
+    data, t = http_post('http://mock-oauth:8080/oauth/guide/start', payload)
+    ok = isinstance(data.get('auth_url'), str) and data['auth_url'].startswith('https://')
+    ok = ok and isinstance(data.get('state'), str) and len(data['state']) >= 8 and data.get('supported') is True
+    out['elapsed'] = t
+    out['passed'] = ok and t <= 1.0
+    out['details'] = data
+    return out
+
 def eval_ctrl_02():
     out = { 'id': 'TC-CTRL-02' }
     payload = { 'domain': 'light', 'service': 'turn_on', 'payload': { 'entity_id': 'light.living_main', 'brightness_pct': 30 } }
@@ -49,6 +60,7 @@ def eval_state_01():
 def main():
     results = []
     results.append(eval_auth_01())
+    results.append(eval_auth_01_v2())
     results.append(eval_ctrl_02())
     results.append(eval_state_01())
     os.makedirs('/work/reports', exist_ok=True)
