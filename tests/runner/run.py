@@ -39,6 +39,16 @@ def eval_auth_01_v2():
     out['details'] = data
     return out
 
+def eval_auth_02():
+    out = { 'id': 'TC-AUTH-02' }
+    payload = { 'brand': 'midea', 'state': 'abcdefgh', 'code': 'auth_code_123' }
+    data, t = http_post('http://mock-oauth:8080/oauth/callback', payload)
+    ok = bool(data.get('stored')) and isinstance(data.get('expires_in'), int)
+    out['elapsed'] = t
+    out['passed'] = ok and t <= 2.0
+    out['details'] = data
+    return out
+
 def eval_ctrl_02():
     out = { 'id': 'TC-CTRL-02' }
     payload = { 'domain': 'light', 'service': 'turn_on', 'payload': { 'entity_id': 'light.living_main', 'brightness_pct': 30 } }
@@ -61,6 +71,7 @@ def main():
     results = []
     results.append(eval_auth_01())
     results.append(eval_auth_01_v2())
+    results.append(eval_auth_02())
     results.append(eval_ctrl_02())
     results.append(eval_state_01())
     os.makedirs('/work/reports', exist_ok=True)
